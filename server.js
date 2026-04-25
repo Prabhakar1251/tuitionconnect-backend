@@ -8,21 +8,8 @@ connectDB();
 
 const app = express();
 
-// Fixed CORS
-app.use(cors({
-  origin: function(origin, callback) {
-    const allowed = [
-      process.env.FRONTEND_URL,
-      'http://localhost:3000'
-    ];
-    if (!origin || allowed.includes(origin)) {
-      callback(null, true);
-    } else {
-      callback(new Error('Not allowed by CORS'));
-    }
-  },
-  credentials: true
-}));
+// Allow all origins temporarily
+app.use(cors());
 
 app.use(express.json());
 
