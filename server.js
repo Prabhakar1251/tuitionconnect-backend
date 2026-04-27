@@ -6,15 +6,27 @@ const connectDB = require('./config/db');
 dotenv.config();
 connectDB();
 
+
+
+
+
+
 const app = express();
 
-/**
- * ✅ CORS Configuration (FIXED)
- */
-const allowedOrigins = [
-  'http://localhost:3000',
-  'https://tuitionconnect.in'
-];
+const cors = require('cors');
+
+const corsOptions = {
+  origin: ['http://localhost:3000', 'https://tuitionconnect.in'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+};
+
+// ✅ Apply CORS globally
+app.use(cors(corsOptions));
+
+// ✅ VERY IMPORTANT: handle preflight for ALL routes
+app.options('*', cors(corsOptions));
 
 app.use(cors({
   origin: function (origin, callback) {
