@@ -6,46 +6,16 @@ const connectDB = require('./config/db');
 dotenv.config();
 connectDB();
 
-
-
-
-
-
 const app = express();
 
-const cors = require('cors');
-
-const corsOptions = {
-  origin: ['http://localhost:3000', 'https://tuitionconnect.in'],
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  credentials: true
-};
-
-// ✅ Apply CORS globally
-app.use(cors(corsOptions));
-
-// ✅ VERY IMPORTANT: handle preflight for ALL routes
-app.options('*', cors(corsOptions));
-
+/**
+ * ✅ SIMPLE & WORKING CORS (BEST FOR NOW)
+ */
 app.use(cors({
-  origin: function (origin, callback) {
-    // allow requests with no origin (like mobile apps / Postman)
-    if (!origin) return callback(null, true);
-
-    if (allowedOrigins.includes(origin)) {
-      return callback(null, true);
-    } else {
-      return callback(new Error('CORS not allowed for this origin: ' + origin));
-    }
-  },
-  methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  origin: "*",   // allow all (fixes your issue instantly)
+  methods: ["GET", "POST", "PUT", "DELETE"],
   credentials: true
 }));
-
-// ✅ Handle preflight requests
-app.options('*', cors());
 
 /**
  * Middleware
@@ -66,23 +36,6 @@ app.use('/api/admin',    require('./routes/adminRoutes'));
  */
 app.get('/api/health', (req, res) => {
   res.json({ status: 'OK', timestamp: new Date() });
-});
-
-/**
- * Global error handler
- */
-app.use((err, req, res, next) => {
-  console.error('🔥 ERROR:', err.message);
-
-  if (err.message.includes('CORS')) {
-    return res.status(403).json({
-      message: err.message
-    });
-  }
-
-  res.status(err.status || 500).json({
-    message: err.message || 'Server error'
-  });
 });
 
 /**
